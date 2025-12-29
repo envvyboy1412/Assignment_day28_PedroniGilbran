@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 type User = {
   id: number;
@@ -11,6 +12,7 @@ type User = {
 };
 
 export default function UsersPage() {
+  const router = useRouter();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -25,20 +27,12 @@ export default function UsersPage() {
 
   const getUsers = async () => {
     try {
-      const response = await fetch(
-        "https://reqres.in/api/users?page=1",
-        {
-          method: "GET",
-          headers,
-        }
-      );
-
+      const response = await fetch("https://reqres.in/api/users?page=1", {
+        method: "GET",
+        headers,
+      });
       const data = await response.json();
-      console.log("API RESPONSE:", data);
-
       setUsers(data.data);
-    } catch (error) {
-      console.error("Error fetch users:", error);
     } finally {
       setLoading(false);
     }
@@ -52,11 +46,12 @@ export default function UsersPage() {
     <div className="p-10">
       <h1 className="text-2xl font-bold mb-6">Users List</h1>
 
-      <div className="grid grid-rows-4 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {users.map((user) => (
           <div
             key={user.id}
-            className="flex items-center gap-4 border p-4 rounded"
+            onClick={() => router.push(`/users/${user.id}`)}
+            className="flex items-center gap-4 border p-4 rounded cursor-pointer hover:bg-cyan-50"
           >
             <img
               src={user.avatar}
@@ -65,12 +60,10 @@ export default function UsersPage() {
             />
 
             <div>
-              <div className="font-semibold">
+              <div className="font-semibold hover:text-amber-200">
                 {user.first_name} {user.last_name}
               </div>
-              <div className="text-sm text-gray-600">
-                {user.email}
-              </div>
+              <div className="text-sm text-gray-600">{user.email}</div>
             </div>
           </div>
         ))}
