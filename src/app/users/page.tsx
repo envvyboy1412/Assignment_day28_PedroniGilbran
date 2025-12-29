@@ -48,6 +48,7 @@ export default function UsersPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {users.map((user) => (
+          
           <div
             key={user.id}
             onClick={() => router.push(`/users/${user.id}`)}
@@ -60,7 +61,7 @@ export default function UsersPage() {
             />
 
             <div>
-              <div className="font-semibold hover:text-amber-200">
+              <div className="font-semibold">
                 {user.first_name} {user.last_name}
               </div>
               <div className="text-sm text-gray-600">{user.email}</div>

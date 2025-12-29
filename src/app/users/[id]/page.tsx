@@ -56,12 +56,12 @@ export default function UserDetailPage() {
     <div className="p-10">
       <button
         onClick={() => router.back()}
-        className="mb-6 text-blue-600"
+        className="mb-6 cursor-pointer text-blue-600"
       >
         ← Back
       </button>
 
-      <div className="flex items-center gap-6 border p-6 rounded max-w-md">
+      <div className="flex items-center gap-6 border p-4 rounded">
         <img
           src={user.avatar}
           alt={user.first_name}
