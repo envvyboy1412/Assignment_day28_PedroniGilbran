@@ -18,6 +18,7 @@ export default function UserDetailPage() {
 
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [authorized, setAuthorized] = useState(false);
 
   const headers = {
     "Content-Type": "application/json",
@@ -25,8 +26,20 @@ export default function UserDetailPage() {
   };
 
   useEffect(() => {
-    getUserDetail();
-  }, []);
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      router.replace("/login");
+    } else {
+      setAuthorized(true);
+    }
+  }, [router]);
+
+  useEffect(() => {
+    if (authorized && id) {
+      getUserDetail();
+    }
+  }, [authorized, id]);
 
   const getUserDetail = async () => {
     try {
@@ -44,7 +57,7 @@ export default function UserDetailPage() {
     }
   };
 
-  if (loading) {
+  if (!authorized || loading) {
     return <div className="p-10">Loading user...</div>;
   }
 
