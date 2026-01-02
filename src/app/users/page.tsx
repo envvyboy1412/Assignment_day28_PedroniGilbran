@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 type User = {
   id: number;
@@ -13,6 +15,7 @@ type User = {
 
 export default function UsersPage() {
   const router = useRouter();
+
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [authorized, setAuthorized] = useState(false);
@@ -24,6 +27,7 @@ export default function UsersPage() {
     "x-api-key": "pro_f8e12047372c3bdf414fe83a2eda7c7ecf0f924a9d3cc156",
   };
 
+
   useEffect(() => {
     const token = localStorage.getItem("token");
 
@@ -33,6 +37,7 @@ export default function UsersPage() {
       setAuthorized(true);
     }
   }, [router]);
+
 
   useEffect(() => {
     if (authorized) {
@@ -51,6 +56,7 @@ export default function UsersPage() {
           headers,
         }
       );
+
       const data = await response.json();
       setUsers(data.data);
       setTotalPages(data.total_pages);
@@ -59,9 +65,14 @@ export default function UsersPage() {
     }
   };
 
+  
   const handleLogout = () => {
     localStorage.removeItem("token");
-    router.replace("/login");
+    toast.success("Logout berhasil");
+
+    setTimeout(() => {
+      router.replace("/login");
+    }, 1500);
   };
 
   if (!authorized || loading) {
@@ -69,58 +80,63 @@ export default function UsersPage() {
   }
 
   return (
-    <div className="p-10">
+    <div className="p-10 bg-gray-100 min-h-screen">
+      <ToastContainer theme="dark" />
+
+      {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Users List</h1>
 
         <button
           onClick={handleLogout}
-          className="px-4 py-2 bg-black text-white rounded cursor-pointer"
+          className="px-4 py-2 bg-black text-white rounded hover:opacity-90"
         >
           Logout
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {/* Users Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {users.map((user) => (
           <div
             key={user.id}
             onClick={() => router.push(`/users/${user.id}`)}
-            className="flex items-center gap-4 border p-4 rounded cursor-pointer hover:bg-cyan-50"
+            className="flex items-center gap-4 bg-white p-4 rounded-xl shadow cursor-pointer hover:bg-gray-50"
           >
             <img
               src={user.avatar}
               alt={user.first_name}
-              className="w-16 h-16 rounded-full"
+              className="w-14 h-14 rounded-full object-cover"
             />
 
             <div>
               <div className="font-semibold">
                 {user.first_name} {user.last_name}
               </div>
-              <div className="text-sm text-gray-600">{user.email}</div>
+              <div className="text-sm text-gray-500">{user.email}</div>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="flex justify-center gap-4 mt-8">
+      {/* Pagination */}
+      <div className="flex justify-center items-center gap-4 mt-10">
         <button
           disabled={page === 1}
           onClick={() => setPage((prev) => prev - 1)}
-          className="px-4 py-2 border rounded disabled:opacity-50"
+          className="px-4 py-2 border rounded disabled:opacity-50 bg-white"
         >
           Prev
         </button>
 
-        <div className="px-4 py-2">
+        <div>
           Page {page} of {totalPages}
         </div>
 
         <button
           disabled={page === totalPages}
           onClick={() => setPage((prev) => prev + 1)}
-          className="px-4 py-2 border rounded disabled:opacity-50"
+          className="px-4 py-2 border rounded disabled:opacity-50 bg-white"
         >
           Next
         </button>

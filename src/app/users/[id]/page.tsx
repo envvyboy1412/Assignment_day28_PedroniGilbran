@@ -18,7 +18,6 @@ export default function UserDetailPage() {
 
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [authorized, setAuthorized] = useState(false);
 
   const headers = {
     "Content-Type": "application/json",
@@ -26,20 +25,8 @@ export default function UserDetailPage() {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      router.replace("/login");
-    } else {
-      setAuthorized(true);
-    }
-  }, [router]);
-
-  useEffect(() => {
-    if (authorized && id) {
-      getUserDetail();
-    }
-  }, [authorized, id]);
+    getUserDetail();
+  }, []);
 
   const getUserDetail = async () => {
     try {
@@ -57,7 +44,7 @@ export default function UserDetailPage() {
     }
   };
 
-  if (!authorized || loading) {
+  if (loading) {
     return <div className="p-10">Loading user...</div>;
   }
 
@@ -66,26 +53,26 @@ export default function UserDetailPage() {
   }
 
   return (
-    <div className="p-10">
+    <div className="min-h-screen bg-gray-100 p-6">
       <button
         onClick={() => router.back()}
-        className="mb-6 cursor-pointer text-blue-600"
+        className="mb-6 text-sm text-blue-600 hover:underline"
       >
-        ← Back
+        ← Back to Users
       </button>
 
-      <div className="flex items-center gap-6 border p-4 rounded">
+      <div className="max-w-xl mx-auto bg-white rounded-xl shadow-sm p-6 flex items-center gap-6">
         <img
           src={user.avatar}
           alt={user.first_name}
-          className="w-24 h-24 rounded-full"
+          className="w-24 h-24 rounded-full object-cover"
         />
 
         <div>
-          <div className="text-xl font-bold">
+          <h1 className="text-2xl font-bold text-gray-900">
             {user.first_name} {user.last_name}
-          </div>
-          <div className="text-gray-600">{user.email}</div>
+          </h1>
+          <p className="text-gray-500 mt-1">{user.email}</p>
         </div>
       </div>
     </div>
